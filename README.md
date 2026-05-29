@@ -8,11 +8,19 @@ The complete [Superpowers](https://github.com/obra/superpowers) methodology — 
 curl -fsSL https://raw.githubusercontent.com/huyphamcs/superpowers-cmd/main/install.sh | bash
 ```
 
-That's it. 14 skills installed, bootstrap injected into `~/.commandcode/AGENTS.md`. Your next `cmd` session has Superpowers.
+That's it. 15 skills installed, bootstrap injected into `~/.commandcode/AGENTS.md`. Your next `cmd` session has Superpowers.
+
+## One-Command Uninstall
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/huyphamcs/superpowers-cmd/main/uninstall.sh | bash
+```
+
+Removes all 15 skills and strips the bootstrap from `~/.commandcode/AGENTS.md`. Clean slate.
 
 ## Built-In Command Install
 
-Command Code has native skill installation. Install all 14 skills in one shot:
+Command Code has native skill installation. Install all 15 skills in one shot:
 
 ```bash
 cmd skills add huyphamcs/superpowers-cmd --global --force
@@ -88,7 +96,7 @@ verification            Test passes, bug is gone. Prove it.
 
 ## Architecture
 
-### Skills Layer (14 skills)
+### Skills Layer (15 skills)
 
 ```
 skills/
@@ -136,7 +144,7 @@ Skills match based on their `description` frontmatter. The bootstrap teaches the
 
 | Feature | Superpowers (Claude Code) | Superpowers for Command Code |
 |---------|---------------------------|------------------------------|
-| Skills | 13 skills | 14 skills (+ cmd-dispatch) |
+| Skills | 13 skills | 15 skills (including cmd-dispatch) |
 | Subagent dispatch | Native `Task` tool | `cmd -p --yolo` headless mode |
 | Parallel agents | Native parallel `Task` | Background `cmd -p &` + `wait` |
 | Context isolation | Built-in | Self-contained prompt files |
@@ -165,24 +173,26 @@ cmd skills add huyphamcs/superpowers-cmd/skills/using-superpowers --global
 - Git
 - Unix shell (macOS, Linux, WSL)
 
-## Uninstall
+## Manual Uninstall
+
+Or use the [one-command uninstall](#one-command-uninstall) to automate this.
 
 ```bash
-cmd skills remove brainstorming --global
-cmd skills remove cmd-dispatch --global
-cmd skills remove dispatching-parallel-agents --global
-cmd skills remove executing-plans --global
-cmd skills remove finishing-a-development-branch --global
-cmd skills remove receiving-code-review --global
-cmd skills remove requesting-code-review --global
-cmd skills remove subagent-driven-development --global
-cmd skills remove systematic-debugging --global
-cmd skills remove test-driven-development --global
-cmd skills remove using-git-worktrees --global
-cmd skills remove using-superpowers --global
-cmd skills remove verification-before-completion --global
-cmd skills remove writing-plans --global
-cmd skills remove writing-skills --global
+cmd skills remove brainstorming --global --yes
+cmd skills remove cmd-dispatch --global --yes
+cmd skills remove dispatching-parallel-agents --global --yes
+cmd skills remove executing-plans --global --yes
+cmd skills remove finishing-a-development-branch --global --yes
+cmd skills remove receiving-code-review --global --yes
+cmd skills remove requesting-code-review --global --yes
+cmd skills remove subagent-driven-development --global --yes
+cmd skills remove systematic-debugging --global --yes
+cmd skills remove test-driven-development --global --yes
+cmd skills remove using-git-worktrees --global --yes
+cmd skills remove using-superpowers --global --yes
+cmd skills remove verification-before-completion --global --yes
+cmd skills remove writing-plans --global --yes
+cmd skills remove writing-skills --global --yes
 ```
 
 Then remove the Superpowers section from `~/.commandcode/AGENTS.md`.

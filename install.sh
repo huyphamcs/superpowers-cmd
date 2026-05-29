@@ -11,10 +11,10 @@ echo -e "${CYAN}  Superpowers for Command Code — Installer${NC}"
 echo -e "${CYAN}═══════════════════════════════════════════${NC}"
 echo ""
 
-# ── Step 1: Install all 14 skills ──────────────────────────
-echo -e "📦 Installing 14 skills from GitHub..."
+# ── Step 1: Install all 15 skills ──────────────────────────
+echo -e "📦 Installing 15 skills from GitHub..."
 if cmd skills add huyphamcs/superpowers-cmd --global --force 2>&1; then
-    echo -e "${GREEN}✓ All 14 skills installed${NC}"
+    echo -e "${GREEN}✓ All 15 skills installed${NC}"
 else
     echo -e "${RED}✗ Some skills failed to install. Check output above.${NC}"
     echo "  You can retry: cmd skills add huyphamcs/superpowers-cmd --global --force"
