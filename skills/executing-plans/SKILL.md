@@ -1,27 +1,25 @@
 ---
 name: executing-plans
-description: Use when you have a written implementation plan to execute with review checkpoints - sequential task-by-task execution
-allowed-tools: Read, Bash, Write, Edit, Grep, Glob, todo_write
+description: Use when you have a written implementation plan to execute in a separate session with review checkpoints
 ---
 
 # Executing Plans
 
 ## Overview
 
-Load plan, review critically, execute all tasks sequentially, report when complete.
+Load plan, review critically, execute all tasks, report when complete.
 
 **Announce at start:** "I'm using the executing-plans skill to implement this plan."
 
-**Note:** If you're on a platform with cmd -p subagent support (Command Code supports this), use subagent-driven-development instead for faster parallel execution. This skill is the sequential fallback.
+**Note:** Tell your human partner that Superpowers works much better with access to subagents. The quality of its work will be significantly higher if run on a platform with subagent support (such as Claude Code or Codex). If subagents are available, use subagent-driven-development instead of this skill.
 
 ## The Process
 
 ### Step 1: Load and Review Plan
-
 1. Read plan file
-2. Review critically - identify questions or concerns
-3. If concerns: raise with your human partner before starting
-4. If no concerns: create TodoWrite and proceed
+2. Review critically - identify any questions or concerns about the plan
+3. If concerns: Raise them with your human partner before starting
+4. If no concerns: Create TodoWrite and proceed
 
 ### Step 2: Execute Tasks
 
@@ -34,12 +32,13 @@ For each task:
 ### Step 3: Complete Development
 
 After all tasks complete and verified:
-- Invoke finishing-a-development-branch
+- Announce: "I'm using the finishing-a-development-branch skill to complete this work."
+- **REQUIRED SUB-SKILL:** Use finishing-a-development-branch
 - Follow that skill to verify tests, present options, execute choice
 
 ## When to Stop and Ask for Help
 
-**STOP executing when:**
+**STOP executing immediately when:**
 - Hit a blocker (missing dependency, test fails, instruction unclear)
 - Plan has critical gaps preventing starting
 - You don't understand an instruction
@@ -47,8 +46,25 @@ After all tasks complete and verified:
 
 **Ask for clarification rather than guessing.**
 
-## Required Workflow Skills
+## When to Revisit Earlier Steps
 
-- **using-git-worktrees** — Ensures isolated workspace
-- **superpowers-writing-plans** — Creates the plan this executes
-- **finishing-a-development-branch** — Complete development after all tasks
+**Return to Review (Step 1) when:**
+- Partner updates the plan based on your feedback
+- Fundamental approach needs rethinking
+
+**Don't force through blockers** - stop and ask.
+
+## Remember
+- Review plan critically first
+- Follow plan steps exactly
+- Don't skip verifications
+- Reference skills when plan says to
+- Stop when blocked, don't guess
+- Never start implementation on main/master branch without explicit user consent
+
+## Integration
+
+**Required workflow skills:**
+- **using-git-worktrees** - Ensures isolated workspace (creates one or verifies existing)
+- **writing-plans** - Creates the plan this skill executes
+- **finishing-a-development-branch** - Complete development after all tasks

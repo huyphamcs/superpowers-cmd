@@ -1,12 +1,11 @@
 ---
 name: requesting-code-review
-description: Use when completing tasks or before merging to verify work meets requirements - dispatches a code reviewer subagent via cmd -p
-allowed-tools: Bash, Read, Grep, Glob
+description: Use when completing tasks, implementing major features, or before merging to verify work meets requirements
 ---
 
 # Requesting Code Review
 
-Dispatch a code reviewer subagent to catch issues before they cascade. The reviewer gets precisely crafted context via `cmd -p` for evaluation — never your session's history.
+Dispatch a code reviewer subagent to catch issues before they cascade. The reviewer gets precisely crafted context for evaluation — never your session's history. This keeps the reviewer focused on the work product, not your thought process, and preserves your own context for continued work.
 
 **Core principle:** Review early, review often.
 
@@ -14,95 +13,91 @@ Dispatch a code reviewer subagent to catch issues before they cascade. The revie
 
 **Mandatory:**
 - After each task in subagent-driven development
-- Before merging to main
-- Before creating a PR
-- After completing a feature
+- After completing major feature
+- Before merge to main
 
-**Whenever:**
-- You've made non-trivial changes
-- You want a second opinion
-- Before handing off to someone else
+**Optional but valuable:**
+- When stuck (fresh perspective)
+- Before refactoring (baseline check)
+- After fixing complex bug
 
-## The Review Pattern
+## How to Request
 
-### Step 1: Prepare Review Context
-
-Get the git range:
+**1. Get git SHAs:**
 ```bash
-BASE_SHA=$(git merge-base HEAD main 2>/dev/null || git merge-base HEAD master 2>/dev/null)
+BASE_SHA=$(git rev-parse HEAD~1)  # or origin/main
 HEAD_SHA=$(git rev-parse HEAD)
 ```
 
-### Step 2: Create Reviewer Prompt
+**2. Dispatch code reviewer subagent:**
 
-Write `.commandcode/subagent-prompts/review-<feature>.md`:
+Use Task tool with `general-purpose` type, fill template at `code-reviewer.md`
+
+**Placeholders:**
+- `{DESCRIPTION}` - Brief summary of what you built
+- `{PLAN_OR_REQUIREMENTS}` - What it should do
+- `{BASE_SHA}` - Starting commit
+- `{HEAD_SHA}` - Ending commit
+
+**3. Act on feedback:**
+- Fix Critical issues immediately
+- Fix Important issues before proceeding
+- Note Minor issues for later
+- Push back if reviewer is wrong (with reasoning)
+
+## Example
 
 ```
-You are a Senior Code Reviewer with expertise in software architecture,
-design patterns, and best practices. Review the completed work.
+[Just completed Task 2: Add verification function]
 
-## What Was Implemented
-{DESCRIPTION}
+You: Let me request code review before proceeding.
 
-## Requirements / Plan
-{PLAN_OR_REQUIREMENTS}
+BASE_SHA=$(git log --oneline | grep "Task 1" | head -1 | awk '{print $1}')
+HEAD_SHA=$(git rev-parse HEAD)
 
-## Git Range to Review
-**Base:** {BASE_SHA}
-**Head:** {HEAD_SHA}
+[Dispatch code reviewer subagent]
+  DESCRIPTION: Added verifyIndex() and repairIndex() with 4 issue types
+  PLAN_OR_REQUIREMENTS: Task 2 from docs/superpowers/plans/deployment-plan.md
+  BASE_SHA: a7981ec
+  HEAD_SHA: 3df7661
 
-Review the diff and check:
-- Plan alignment: does it match requirements?
-- Code quality: separation of concerns, error handling, type safety
-- Architecture: sound design, scalable, secure
-- Testing: tests verify real behavior, edge cases covered
-- Production readiness: no obvious bugs, migrations handled
+[Subagent returns]:
+  Strengths: Clean architecture, real tests
+  Issues:
+    Important: Missing progress indicators
+    Minor: Magic number (100) for reporting interval
+  Assessment: Ready to proceed
 
-Categorize issues by actual severity. Not everything is Critical.
-
-## Output Format
-### Strengths
-[What's well done? Be specific.]
-
-### Issues
-#### Critical (Must Fix)
-[Bugs, security, data loss, broken functionality]
-
-#### Important (Should Fix)
-[Architecture, missing features, poor error handling, test gaps]
-
-#### Minor (Nice to Have)
-[Style, optimization, documentation]
-
-### Recommendations
-### Assessment
-**Ready to merge?** [Yes | No | With fixes]
+You: [Fix progress indicators]
+[Continue to Task 3]
 ```
 
-### Step 3: Dispatch Reviewer
+## Integration with Workflows
 
-```bash
-cmd -p "$(cat .commandcode/subagent-prompts/review-<feature>.md)" \
-  --yolo --max-turns 12 --trust \
-  2>&1 | tee .commandcode/subagent-results/review-<feature>.txt
-```
+**Subagent-Driven Development:**
+- Review after EACH task
+- Catch issues before they compound
+- Fix before moving to next task
 
-### Step 4: Process Results
+**Executing Plans:**
+- Review after each task or at natural checkpoints
+- Get feedback, apply, continue
 
-Review the output. Address Critical and Important issues before proceeding. Minor issues are advisory.
+**Ad-Hoc Development:**
+- Review before merge
+- Review when stuck
 
-## Critical Rules
+## Red Flags
 
-**DO:**
-- Categorize by actual severity
-- Be specific (file:line, not vague)
-- Explain WHY each issue matters
-- Acknowledge strengths
-- Give a clear verdict
+**Never:**
+- Skip review because "it's simple"
+- Ignore Critical issues
+- Proceed with unfixed Important issues
+- Argue with valid technical feedback
 
-**DON'T:**
-- Say "looks good" without checking
-- Mark nitpicks as Critical
-- Give feedback on code you didn't read
-- Be vague ("improve error handling")
-- Avoid giving a clear verdict
+**If reviewer wrong:**
+- Push back with technical reasoning
+- Show code/tests that prove it works
+- Request clarification
+
+See template at: requesting-code-review/code-reviewer.md

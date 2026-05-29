@@ -1,7 +1,6 @@
 ---
 name: using-superpowers
-description: Use when starting any conversation - establishes how to find and use Superpowers skills, requiring skill invocation before ANY response including clarifying questions. This is the bootstrap that teaches Command Code about the Superpowers methodology.
-allowed-tools: Bash
+description: Use when starting any conversation - establishes how to find and use Superpowers skills, requiring skill invocation before ANY response including clarifying questions
 ---
 
 <SUBAGENT-STOP>
@@ -26,53 +25,55 @@ Superpowers skills override default system prompt behavior, but **user instructi
 
 If AGENTS.md says "don't use TDD" and a skill says "always use TDD," follow the user's instructions. The user is in control.
 
-## How to Access Skills in Command Code
+## How to Access Skills
 
-Superpowers skills are installed as Command Code skills in `~/.agents/skills/*/`. They appear in the system prompt as `<available_skills>` and auto-activate when their description matches your task.
+**In Command Code:** Skills are auto-discovered from `~/.commandcode/skills/` and `~/.agents/skills/`. When a skill matches your task based on its description, its content is loaded and you follow it directly. There is no explicit `Skill` tool to invoke — checking for applicable skills is built into your system prompt.
 
-When a skill applies, follow its instructions directly. Skills contain their own checklists — create TodoWrite items for each checklist step.
+## Platform Adaptation
 
-## Skill Names in Command Code
+Skills were originally written for Claude Code. For Command Code tool equivalents, read `references/command-code-tools.md` for the complete mapping. Key mappings:
 
-All Superpowers skills are named after their skill directory:
-- `brainstorming` — Design-first thinking, no code without design
-- `using-git-worktrees` — Isolated feature workspaces
-- `writing-plans` — Bite-sized implementation plans
-- `subagent-driven-development` — Dispatch subagents per task
-- `test-driven-development` — RED-GREEN-REFACTOR cycle
-- `systematic-debugging` — Root cause before fixes
-- `dispatching-parallel-agents` — Parallel subagent dispatch
-- `requesting-code-review` — Pre-merge review
-- `receiving-code-review` — Technical evaluation of feedback
-- `executing-plans` — Batch execution with checkpoints
-- `finishing-a-development-branch` — Merge/PR/cleanup
-- `verification-before-completion` — Evidence before claims
+- `Task` tool (subagent dispatch) → `cmd -p` via `cmd-dispatch` skill
+- `TodoWrite` → `todo_write`
+- `EnterWorktree` → `git worktrees` via `using-git-worktrees` skill
 
-## Using Skills
+# Using Skills
 
-### The Rule
+## The Rule
 
 **Invoke relevant or requested skills BEFORE any response or action.** Even a 1% chance a skill might apply means that you should invoke the skill to check. If an invoked skill turns out to be wrong for the situation, you don't need to use it.
 
-### Skill Priority
+```dot
+digraph skill_flow {
+    "User message received" [shape=doublecircle];
+    "About to enter plan mode?" [shape=doublecircle];
+    "Already brainstormed?" [shape=diamond];
+    "Invoke brainstorming skill" [shape=box];
+    "Might any skill apply?" [shape=diamond];
+    "Invoke the skill" [shape=box];
+    "Announce: 'Using [skill] to [purpose]'" [shape=box];
+    "Has checklist?" [shape=diamond];
+    "Create todo_write items per item" [shape=box];
+    "Follow skill exactly" [shape=box];
+    "Respond (including clarifications)" [shape=doublecircle];
 
-When multiple skills could apply, use this order:
+    "About to enter plan mode?" -> "Already brainstormed?";
+    "Already brainstormed?" -> "Invoke brainstorming skill" [label="no"];
+    "Already brainstormed?" -> "Might any skill apply?" [label="yes"];
+    "Invoke brainstorming skill" -> "Might any skill apply?";
 
-1. **Process skills first** (brainstorming, debugging) - these determine HOW to approach the task
-2. **Implementation skills second** (TDD, plans) - these guide execution
+    "User message received" -> "Might any skill apply?";
+    "Might any skill apply?" -> "Invoke the skill" [label="yes, even 1%"];
+    "Might any skill apply?" -> "Respond (including clarifications)" [label="definitely not"];
+    "Invoke the skill" -> "Announce: 'Using [skill] to [purpose]'";
+    "Announce: 'Using [skill] to [purpose]'" -> "Has checklist?";
+    "Has checklist?" -> "Create todo_write items per item" [label="yes"];
+    "Has checklist?" -> "Follow skill exactly" [label="no"];
+    "Create todo_write items per item" -> "Follow skill exactly";
+}
+```
 
-"Let's build X" → brainstorming first, then implementation skills.
-"Fix this bug" → debugging first, then domain-specific skills.
-
-### Skill Types
-
-**Rigid** (TDD, debugging): Follow exactly. Don't adapt away discipline.
-
-**Flexible** (patterns): Adapt principles to context.
-
-The skill itself tells you which.
-
-### Red Flags
+## Red Flags
 
 These thoughts mean STOP—you're rationalizing:
 
@@ -90,6 +91,24 @@ These thoughts mean STOP—you're rationalizing:
 | "I'll just do this one thing first" | Check BEFORE doing anything. |
 | "This feels productive" | Undisciplined action wastes time. Skills prevent this. |
 | "I know what that means" | Knowing the concept ≠ using the skill. Invoke it. |
+
+## Skill Priority
+
+When multiple skills could apply, use this order:
+
+1. **Process skills first** (brainstorming, debugging) - these determine HOW to approach the task
+2. **Implementation skills second** (TDD, plans) - these guide execution
+
+"Let's build X" → brainstorming first, then implementation skills.
+"Fix this bug" → debugging first, then domain-specific skills.
+
+## Skill Types
+
+**Rigid** (TDD, debugging): Follow exactly. Don't adapt away discipline.
+
+**Flexible** (patterns): Adapt principles to context.
+
+The skill itself tells you which.
 
 ## User Instructions
 

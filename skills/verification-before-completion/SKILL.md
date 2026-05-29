@@ -1,7 +1,6 @@
 ---
 name: verification-before-completion
 description: Use when about to claim work is complete, fixed, or passing, before committing or creating PRs - requires running verification commands and confirming output before making any success claims; evidence before assertions always
-allowed-tools: Bash
 ---
 
 # Verification Before Completion
@@ -53,11 +52,13 @@ Skip any step = lying, not verifying
 ## Red Flags - STOP
 
 - Using "should", "probably", "seems to"
-- Expressing satisfaction before verification ("Great!", "Perfect!", "Done!")
+- Expressing satisfaction before verification ("Great!", "Perfect!", "Done!", etc.)
 - About to commit/push/PR without verification
 - Trusting agent success reports
 - Relying on partial verification
 - Thinking "just this once"
+- Tired and wanting work over
+- **ANY wording implying success without having run verification**
 
 ## Rationalization Prevention
 
@@ -75,20 +76,43 @@ Skip any step = lying, not verifying
 ## Key Patterns
 
 **Tests:**
-- ✅ [Run test command] [See: 34/34 pass] "All tests pass"
-- ❌ "Should pass now" / "Looks correct"
+```
+✅ [Run test command] [See: 34/34 pass] "All tests pass"
+❌ "Should pass now" / "Looks correct"
+```
 
 **Regression tests (TDD Red-Green):**
-- ✅ Write → Run (pass) → Revert fix → Run (MUST FAIL) → Restore → Run (pass)
-- ❌ "I've written a regression test" (without red-green verification)
+```
+✅ Write → Run (pass) → Revert fix → Run (MUST FAIL) → Restore → Run (pass)
+❌ "I've written a regression test" (without red-green verification)
+```
 
 **Build:**
-- ✅ [Run build] [See: exit 0] "Build passes"
-- ❌ "Linter passed" (linter doesn't check compilation)
+```
+✅ [Run build] [See: exit 0] "Build passes"
+❌ "Linter passed" (linter doesn't check compilation)
+```
+
+**Requirements:**
+```
+✅ Re-read plan → Create checklist → Verify each → Report gaps or completion
+❌ "Tests pass, phase complete"
+```
 
 **Agent delegation:**
-- ✅ Agent reports success → Check VCS diff → Verify changes → Report actual state
-- ❌ Trust agent report
+```
+✅ Agent reports success → Check VCS diff → Verify changes → Report actual state
+❌ Trust agent report
+```
+
+## Why This Matters
+
+From 24 failure memories:
+- your human partner said "I don't believe you" - trust broken
+- Undefined functions shipped - would crash
+- Missing requirements shipped - incomplete features
+- Time wasted on false completion → redirect → rework
+- Violates: "Honesty is a core value. If you lie, you'll be replaced."
 
 ## When To Apply
 
@@ -99,6 +123,12 @@ Skip any step = lying, not verifying
 - Committing, PR creation, task completion
 - Moving to next task
 - Delegating to agents
+
+**Rule applies to:**
+- Exact phrases
+- Paraphrases and synonyms
+- Implications of success
+- ANY communication suggesting completion/correctness
 
 ## The Bottom Line
 
