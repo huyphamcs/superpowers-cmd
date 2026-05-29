@@ -8,7 +8,7 @@ Every skill from the original. Every workflow. Design-first thinking, test-drive
 
 ```bash
 # Clone the repo
-git clone https://github.com/andersonli/superpowers-cmd.git
+git clone https://github.com/huyphamcs/superpowers-cmd.git
 cd superpowers-cmd
 
 # Install skills
